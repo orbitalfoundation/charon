@@ -1,0 +1,12 @@
+[workspace]
+
+members = [
+  "boot",
+  "service",
+  "broker",
+  "display",
+  "scripting",
+
+  "camera",
+]
+

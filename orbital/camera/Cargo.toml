@@ -1,0 +1,20 @@
+[package]
+name = "camera"
+version = "0.1.0"
+authors = ["Anselm Hook <anselm@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+
+crossbeam = "0.8.1"
+
+service = { path = "../service" }
+
+objc = "*"
+cocoa = "*"
+dispatch = "*"
+core-foundation = "*"
+core-media-sys = "*"
+libc = "*"
+#block = "*"
+#simple-counter="*"
