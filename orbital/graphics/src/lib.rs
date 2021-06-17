@@ -1,9 +1,43 @@
+/*
+
+Using bevy as a rendering layer:
+
+It's not really designed to be used the way I am using it. There are several tensions:
+
+- "system" -> bevy has a conceit that it itself should be your outermost scope or 'system'
+- mainloop -> as a result it grabs the run loop; preventing you from doing any other work
+- "resource" -> if you want to do work you have to carefully package up any state as a resource
+- "system" -> bevy introduces a pile of concepts, one is a system that can "do work"
+- "query" -> it's unclear exactly how a system gets arbitrary arguments but it just works
+
+My approach:
+
+- messages -> I've managed to get my message channel visible to a bevy "system" at runtime
+- create -> I pass messages to my code to manufacture bevy objects as I wish
+
+References:
+	https://caballerocoll.com/blog/bevy-chess-tutorial/
+	https://bevy-cheatbook.github.io/programming/res.html
+	https://github.com/bevyengine/bevy/blob/main/examples/window/window_settings.rs
+	https://github.com/bevyengine/bevy/blob/latest/examples/3d/3d_scene.rs
+*/
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 use std::fs;
 use crossbeam::channel::*;
 use service::*;
 
 use bevy::prelude::*;
+use bevy_mod_picking::*;
+
+//////////////////////////////////////////////////////////////////////////////////////
+
+struct AWayToHaveGlobalState {
+	receiver: Receiver<Message>,
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
 
 #[derive(Clone)]
 pub struct Graphics {}
@@ -20,87 +54,142 @@ impl Serviceable for Graphics {
 		let recv = recv.clone();
 		let name = self.name();
 
-		// run bevy
+	    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// tell the system message broker that I want to listen for messages to '/display'
+
+		let message = Message::Subscribe(_sid,"/display".to_string());
+	    send.send(message).expect("error");
+
+	    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		// run bevy - this never returns annoyingly
+
 		App::build()
-	        .insert_resource(WindowDescriptor {
-	            title: "I am a window!".to_string(),
-	            width: 500.,
-	            height: 300.,
-	            vsync: true,
-	            ..Default::default()
-	        })
 			.insert_resource(Msaa { samples: 4 })
-			.add_plugins(DefaultPlugins)
-	        .add_system(change_title.system())
-			.add_startup_system(setup_bevy.system())
-			.run();
-
-/*
-		// this never gets visited
-		let _thread = std::thread::Builder::new().name(name.to_string()).spawn(move || {
-
-			// wait for commands and then load and run those arbitrary scripts
-			// TODO right now this is not inside of a message handler - move there later
-			// TODO remove hardcoded test
-/*
-			let mut contents = fs::read_to_string("../apps/test3d/weathercard.js").expect("Something went wrong reading the file").to_owned();
-			let str2:String =  "orbital_script_parser(0,0,root);\n\"done\";\n".to_owned();
-			contents.push_str(&str2);
-			let value2 = context.eval_as::<String>(&contents).unwrap();
-			println!("result is {}",&value2);
-*/
-			// um... ? not sure if I should do anything here... if js file returns is it done? what about on_event handling?
-
-			while let Ok(message) = recv.recv() {
-				match message {
-					_ => { },
+			.insert_resource(WindowDescriptor {
+			    title: "Orbital".to_string(),
+			    width: 600.0,
+			    height: 800.0,
+			    ..Default::default()
+			})
+			.insert_resource(
+				AWayToHaveGlobalState {
+					receiver: recv.clone(),
 				}
-			}
-		});
-
-*/
-
+			)
+			.add_system(SetTitle.system())
+			.add_system(ListenToMessages.system())
+			.add_plugins(DefaultPlugins)
+			.add_plugin(PickingPlugin)
+			.add_plugin(DebugCursorPickingPlugin)
+//			.add_plugin(DebugEventsPickingPlugin)
+			.run();
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////////////////
 
-
-/// This system will then change the title during execution
-fn change_title(time: Res<Time>, mut windows: ResMut<Windows>) {
-    let window = windows.get_primary_mut().unwrap();
-    window.set_title(format!(
-        "Seconds since startup: {}",
-        time.seconds_since_startup().round()
-    ));
+fn SetTitle(time: Res<Time>, mut windows: ResMut<Windows>) {
+	let window = windows.get_primary_mut().unwrap();
+	window.set_title(format!("Seconds since startup: {}",time.seconds_since_startup().round()));
 }
 
+//////////////////////////////////////////////////////////////////////////////////////
 
-fn setup_bevy(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
+fn ListenToMessages(
+	mut commands: Commands,
+	mut assets: Res<AssetServer>,
+	mut meshes: ResMut<Assets<Mesh>>,
+	mut materials: ResMut<Assets<StandardMaterial>>,
+	mut mystate: ResMut<AWayToHaveGlobalState>
 ) {
-    // plane
-    commands.spawn_bundle(PbrBundle {
-        mesh: meshes.add(Mesh::from(shape::Plane { size: 5.0 })),
-        material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
-        ..Default::default()
-    });
-    // cube
-    commands.spawn_bundle(PbrBundle {
-        mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
-        material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
-        transform: Transform::from_xyz(0.0, 0.5, 0.0),
-        ..Default::default()
-    });
-    // light
-    commands.spawn_bundle(LightBundle {
-        transform: Transform::from_xyz(4.0, 8.0, 4.0),
-        ..Default::default()
-    });
-    // camera
-    commands.spawn_bundle(PerspectiveCameraBundle {
-        transform: Transform::from_xyz(-2.0, 2.5, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
-        ..Default::default()
-    });
+    while let Ok(message) = mystate.receiver.try_recv() {
+        match message {
+            Message::Event(topic,data) => {
+                println!("Graphics: Received: {} {}",topic, data);
+                match data.as_str() {
+                    "camera" => {
+						commands.spawn_bundle(PerspectiveCameraBundle {
+							transform: Transform::from_xyz(-2.0, 2.5, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
+							..Default::default()
+						})
+						.insert_bundle(PickingCameraBundle::default());
+                    },
+                    "light" => {
+						commands.spawn_bundle(LightBundle {
+							transform: Transform::from_xyz(4.0, 8.0, 4.0),
+							..Default::default()
+						});
+                    },
+                    "plane" => {
+						commands.spawn_bundle(PbrBundle {
+							mesh: meshes.add(Mesh::from(shape::Plane { size: 5.0 })),
+							material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
+							..Default::default()
+						});
+                    },
+                	"load" => {
+                    },
+                    "cube" => {
+						commands.spawn_bundle(PbrBundle {
+							mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
+							material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
+							transform: Transform::from_xyz(0.0, 0.5, 0.0),
+							..Default::default()
+						})
+						.insert_bundle(PickableBundle::default());
+                    },
+                    "move" => {
+                    },
+                    _ => {
+                    }
+                }
+            },
+			_ => { },
+		}
+	}
 }
+
+/*
+
+pub fn load_something (
+    commands: &mut Commands,
+    material: Handle<StandardMaterial>,
+    mesh: Handle<Mesh>,
+    position: Vec3,
+) {
+    commands
+        .spawn(PbrBundle {
+            transform: Transform::from_translation(position),
+            ..Default::default()
+        })
+        .with_children(|parent| {
+            parent.spawn(PbrBundle {
+                mesh,
+                material,
+                transform: {
+                    let mut transform = Transform::from_translation(Vec3::new(-0.2, 0., -0.95));
+                    transform.apply_non_uniform_scale(Vec3::new(0.2, 0.2, 0.2));
+                    transform
+                },
+                ..Default::default()
+            });
+        });
+}
+
+
+fn move_something(
+	time: Res<Time>,
+	mut query: Query<(&mut Transform, &Piece)>
+) {
+    for (mut transform, piece) in query.iter_mut() {
+        // Get the direction to move in
+        let direction = Vec3::new(piece.x as f32, 0., piece.y as f32) - transform.translation;
+
+        // Only move if the piece isn't already there (distance is big)
+        if direction.length() > 0.1 {
+            transform.translation += direction.normalize() * time.delta_seconds();
+        }
+    }
+}
+*/
+

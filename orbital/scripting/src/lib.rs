@@ -33,7 +33,7 @@ impl Serviceable for Scripting {
 			let orbital_sleep = move |duration:i32| {
 				println!("javascript asked for sleep of duration {}",duration);
 	            std::thread::sleep(std::time::Duration::from_millis(duration as u64));
-	            1
+				12341234
 			};
 			context.add_callback("sleep", orbital_sleep ).unwrap();
 
@@ -42,17 +42,18 @@ impl Serviceable for Scripting {
 				let message = Message::Event("/display".to_string(),_a.to_string());
 				let send2 = send.clone();
 				send2.send(message).expect("error");
-	            std::thread::sleep(std::time::Duration::from_millis(2000));
 				12341234
 			};
 			context.add_callback("orbital_message", orbital_message ).unwrap();
 
 			// add some other special helpers to the context as well - these happen to be written in js
 			let contents = fs::read_to_string("../apps/test.js").expect("Something went wrong reading the file");
-
-//            let contents = fs::read_to_string("scripts/bootsupport.js").expect("Something went wrong reading the file");
 			let value = context.eval_as::<String>(&contents).unwrap();
 			println!("result is {}",&value);
+
+			// unused stuff - tbd
+
+//            let contents = fs::read_to_string("scripts/bootsupport.js").expect("Something went wrong reading the file");
 
 			// wait for commands and then load and run those arbitrary scripts
 			// TODO right now this is not inside of a message handler - move there later

@@ -16,7 +16,9 @@ class System {
 let system = new System()
 
 // test invoke wrapper to make a cube
-system.make()
+orbital_message("camera")
+orbital_message("light")
+orbital_message("plane")
 
 // sleep and then test invoke wrapper to make a cube again
 sleep(1000)
