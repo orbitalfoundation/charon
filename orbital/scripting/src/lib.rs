@@ -47,7 +47,7 @@ impl Serviceable for Scripting {
 			context.add_callback("orbital_message", orbital_message ).unwrap();
 
 			// add some other special helpers to the context as well - these happen to be written in js
-			let contents = fs::read_to_string("../apps/test.js").expect("Something went wrong reading the file");
+			let contents = fs::read_to_string("../public/index.js").expect("Something went wrong reading the file");
 			let value = context.eval_as::<String>(&contents).unwrap();
 			println!("result is {}",&value);
 

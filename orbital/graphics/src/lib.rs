@@ -10,6 +10,8 @@ It's not really designed to be used the way I am using it. There are several ten
 - "system" -> bevy introduces a pile of concepts, one is a system that can "do work"
 - "query" -> it's unclear exactly how a system gets arbitrary arguments but it just works
 
+Unfortunately bevy itself is a way of thinking; and it has its own learning curve.
+
 My approach:
 
 - messages -> I've managed to get my message channel visible to a bevy "system" at runtime
@@ -35,6 +37,11 @@ use bevy_mod_picking::*;
 
 struct AWayToHaveGlobalState {
 	receiver: Receiver<Message>,
+}
+
+struct MyProperties {
+	x: f32,
+	y: f32,
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -76,8 +83,9 @@ impl Serviceable for Graphics {
 					receiver: recv.clone(),
 				}
 			)
-			.add_system(SetTitle.system())
-			.add_system(ListenToMessages.system())
+			.add_system(set_title.system())
+			.add_system(listen_to_messages.system())
+			.add_system(move_things.system())
 			.add_plugins(DefaultPlugins)
 			.add_plugin(PickingPlugin)
 			.add_plugin(DebugCursorPickingPlugin)
@@ -88,14 +96,14 @@ impl Serviceable for Graphics {
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-fn SetTitle(time: Res<Time>, mut windows: ResMut<Windows>) {
+fn set_title(time: Res<Time>, mut windows: ResMut<Windows>) {
 	let window = windows.get_primary_mut().unwrap();
 	window.set_title(format!("Seconds since startup: {}",time.seconds_since_startup().round()));
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-fn ListenToMessages(
+fn listen_to_messages(
 	mut commands: Commands,
 	mut assets: Res<AssetServer>,
 	mut meshes: ResMut<Assets<Mesh>>,
@@ -136,11 +144,24 @@ fn ListenToMessages(
 							transform: Transform::from_xyz(0.0, 0.5, 0.0),
 							..Default::default()
 						})
+						
+						.insert(MyProperties{ x:3.0, y:3.0 })
 						.insert_bundle(PickableBundle::default());
                     },
                     "move" => {
                     },
                     _ => {
+						let path = "../../../public/".to_string() + data.as_str() + "#Mesh0/Primitive0";
+						let mesh: Handle<Mesh> = assets.load(path.as_str());
+						commands.spawn_bundle(PbrBundle {
+							//mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
+							mesh: mesh,
+							material: materials.add(Color::rgb(0.8, 0.1, 0.1).into()),
+							transform: Transform::from_xyz(0.0, 0.5, 0.0),
+							..Default::default()
+						})
+						//.with(MyProperties{ x:3.0, y:3.0 })
+						.insert_bundle(PickableBundle::default());
                     }
                 }
             },
@@ -148,6 +169,21 @@ fn ListenToMessages(
 		}
 	}
 }
+
+fn move_things(
+	time: Res<Time>,
+	mut query: Query<(&mut Transform, &MyProperties)>
+) {
+    for (mut transform, myprops) in query.iter_mut() {
+        // Get the direction to move in
+        let direction = Vec3::new(myprops.x as f32, 0.0, myprops.y as f32) - transform.translation;
+        // Only move if isn't already there (distance is big)
+        if direction.length() > 0.1 {
+            transform.translation += direction.normalize() * time.delta_seconds();
+        }
+    }
+}
+
 
 /*
 
@@ -177,19 +213,5 @@ pub fn load_something (
 }
 
 
-fn move_something(
-	time: Res<Time>,
-	mut query: Query<(&mut Transform, &Piece)>
-) {
-    for (mut transform, piece) in query.iter_mut() {
-        // Get the direction to move in
-        let direction = Vec3::new(piece.x as f32, 0., piece.y as f32) - transform.translation;
-
-        // Only move if the piece isn't already there (distance is big)
-        if direction.length() > 0.1 {
-            transform.translation += direction.normalize() * time.delta_seconds();
-        }
-    }
-}
 */
 

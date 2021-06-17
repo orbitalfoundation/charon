@@ -19,6 +19,7 @@ let system = new System()
 orbital_message("camera")
 orbital_message("light")
 orbital_message("plane")
+orbital_message("monkey.gltf")
 
 // sleep and then test invoke wrapper to make a cube again
 sleep(1000)
