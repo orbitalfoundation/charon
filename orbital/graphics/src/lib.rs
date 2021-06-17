@@ -1,28 +1,3 @@
-/*
-
-Using bevy as a rendering layer:
-
-It's not really designed to be used the way I am using it. There are several tensions:
-
-- "system" -> bevy has a conceit that it itself should be your outermost scope or 'system'
-- mainloop -> as a result it grabs the run loop; preventing you from doing any other work
-- "resource" -> if you want to do work you have to carefully package up any state as a resource
-- "system" -> bevy introduces a pile of concepts, one is a system that can "do work"
-- "query" -> it's unclear exactly how a system gets arbitrary arguments but it just works
-
-Unfortunately bevy itself is a way of thinking; and it has its own learning curve.
-
-My approach:
-
-- messages -> I've managed to get my message channel visible to a bevy "system" at runtime
-- create -> I pass messages to my code to manufacture bevy objects as I wish
-
-References:
-	https://caballerocoll.com/blog/bevy-chess-tutorial/
-	https://bevy-cheatbook.github.io/programming/res.html
-	https://github.com/bevyengine/bevy/blob/main/examples/window/window_settings.rs
-	https://github.com/bevyengine/bevy/blob/latest/examples/3d/3d_scene.rs
-*/
 
 //////////////////////////////////////////////////////////////////////////////////////
 
