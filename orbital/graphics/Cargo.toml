@@ -1,13 +1,12 @@
 [package]
-name = "scripting"
+name = "graphics"
 version = "0.1.0"
 edition = "2018"
 
 [dependencies]
 
 crossbeam = "0.8.1"
-rand = "0.8.4"
-quick-js = "0.4.1"
 
 service = { path = "../service" }
 
+bevy = "0.5"

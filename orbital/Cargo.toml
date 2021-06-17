@@ -5,6 +5,7 @@ members = [
   "service",
   "broker",
   "display",
+  "graphics",
   "scripting",
 
   "camera",
