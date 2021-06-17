@@ -33,6 +33,9 @@ use service::*;
 use bevy::prelude::*;
 use bevy_mod_picking::*;
 
+mod orbit;
+use orbit::{OrbitCamera,OrbitCameraPlugin};
+
 //////////////////////////////////////////////////////////////////////////////////////
 
 struct AWayToHaveGlobalState {
@@ -87,6 +90,7 @@ impl Serviceable for Graphics {
 			.add_system(listen_to_messages.system())
 			.add_system(move_things.system())
 			.add_plugins(DefaultPlugins)
+			.add_plugin(OrbitCameraPlugin)
 			.add_plugin(PickingPlugin)
 			.add_plugin(DebugCursorPickingPlugin)
 //			.add_plugin(DebugEventsPickingPlugin)
@@ -120,6 +124,7 @@ fn listen_to_messages(
 							transform: Transform::from_xyz(-2.0, 2.5, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
 							..Default::default()
 						})
+					    .insert(OrbitCamera::default())
 						.insert_bundle(PickingCameraBundle::default());
                     },
                     "light" => {
