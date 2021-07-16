@@ -1,28 +1,3 @@
-/*
-
-See also:
-
-State transport between WASM modules:
-
-https://alexene.dev/2020/08/17/webassembly-without-the-browser-part-1.html
-https://www.youtube.com/watch?v=vqBtoPJoQOE
-https://docs.wasmtime.dev/examples-rust-hello-world.html
-https://docs.wasmtime.dev/examples-rust-wasi.html
-https://docs.wasmtime.dev/examples-rust-multi-value.html
-https://hacks.mozilla.org/2019/03/standardizing-wasi-a-webassembly-system-interface/
-https://labs.imaginea.com/talk-the-nuts-and-bolts-of-webassembly/
-https://kevinhoffman.medium.com/introducing-wapc-dc9d8b0c2223
-https://github.com/wasmCloud/wascap
-https://github.com/wasmCloud
-https://www.ralphminderhoud.com/blog/rust-ffi-wrong-way/
-https://doc.rust-lang.org/nomicon/ffi.html
-https://www.youtube.com/watch?v=B8a01m8B6LU
-https://rise.cs.berkeley.edu/projects/erdos/
-https://www.w3.org/2018/12/games-workshop/slides/08-web-idl-bindings.pdf
-
-https://docs.microsoft.com/en-us/windows/mixed-reality/mrtk-unity/features/ux-building-blocks/app-bar
-
-*/
 
 use crossbeam::channel::*;
 use std::error::Error;

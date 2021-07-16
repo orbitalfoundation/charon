@@ -4,5 +4,5 @@ version = "0.1.0"
 
 [dependencies]
 
-crossbeam = "0.8.0"
+crossbeam = "0.8.1"
 wasmtime = "0.25.0"
