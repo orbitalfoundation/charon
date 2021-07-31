@@ -696,8 +696,8 @@ impl State {
 		self.mybrush.borrow_mut().queue(Section {
 			screen_position: (30.0, 30.0),
 			bounds: (self.size.width as f32, self.size.height as f32),
-			text: vec![Text::new("Hello wgpu_glyph!")
-				.with_color([0.0, 0.0, 0.0, 1.0])
+			text: vec![Text::new("ORBITAL ORBITAL")
+				.with_color([0.0, 1.0, 0.0, 1.0])
 				.with_scale(40.0)],
 			..Section::default()
 		});
@@ -705,8 +705,8 @@ impl State {
 		self.mybrush.borrow_mut().queue(Section {
 			screen_position: (30.0, 90.0),
 			bounds: (self.size.width as f32, self.size.height as f32),
-			text: vec![Text::new("Hello wgpu_glyph!")
-				.with_color([1.0, 1.0, 1.0, 1.0])
+			text: vec![Text::new("ORBITTTTTT")
+				.with_color([1.0, 0.5, 1.0, 1.0])
 				.with_scale(40.0)],
 			..Section::default()
 		});
@@ -722,10 +722,10 @@ impl State {
 				self.size.height,
 			),
 			Region {
-				x: 40,
-				y: 105,
+				x: 20,
+				y: 100,
 				width: 200,
-				height: 15,
+				height: 35,
 			},
 		).expect("Draw queued");
 
