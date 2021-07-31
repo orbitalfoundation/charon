@@ -13,6 +13,6 @@ winit_input_helper = "0.10.0"
 service = { path = "../service" }
 
 
-# playtesting this one
+# this is a test of the pixels rendering library [ see https://crates.io/crates/pixels ]
 
 pixels = "0.3.0"

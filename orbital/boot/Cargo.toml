@@ -6,5 +6,5 @@ edition = "2018"
 [dependencies]
 
 broker = { path = "../broker" }
-graphics = { path = "../graphics" }
+view = { path = "../view" }
 scripting = { path = "../scripting" }

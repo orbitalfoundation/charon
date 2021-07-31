@@ -1,14 +1,14 @@
 
 use broker;
 use scripting;
-use graphics;
+use view;
 
 fn main() {
 
 	let services = [
 		broker::Broker::new,
 		scripting::Scripting::new,
-		graphics::Graphics::new,		// must be last due to a design issue in winit
+		view::View::new,		// must be last due to a design issue in winit
 	];
 
 	broker::bootstrap( &services )
