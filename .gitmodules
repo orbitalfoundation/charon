@@ -1,0 +1,3 @@
+[submodule "orbital/makepad"]
+	path = orbital/makepad
+	url = https://github.com/makepad/makepad

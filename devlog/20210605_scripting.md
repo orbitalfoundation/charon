@@ -1,4 +1,4 @@
-# An orbital grammar
+# Scripting grammar
 
 The goal is to define a largely declarative grammar that makes it possible for novices to drive orbital; to set up modules, wire them together, handle events.
 
@@ -77,27 +77,6 @@ quickjs <- I am using this
 		it is not perfectly clear how to do that
 
 ### Allowing includes ???
-
-### How does servo expose apis to javascript?
-
-In servo we see a pattern where there's a javascript language and then also a pile of web apis.
-Is there a formal way that those apis are registered?
-
-One api is document.* such as document.createElement() and document.query() and document.body.addListener()
-I think I want to exactly emulate this dom building pattern for my own dom in fact.
-
-Also, browsers in general expose a webglcontext in a similar way; as an object from a canvas context.
-And presumably other apis such as https://github.com/servo/webxr are exposed to js in a similar way.
-
-### Webassembly and access to web apis?
-
-How about webassembly itself? Can it see any apis? (no)
-
-	in servo and firefox basically webassembly gets access to webapis in general
-		https://developer.mozilla.org/en-US/docs/Web/API
-		https://developer.mozilla.org/en-US/docs/WebAssembly/Concepts
-
-"By itself, WebAssembly cannot currently directly access the DOM; it can only call JavaScript, passing in integer and floating point primitive data types. Thus, to access any Web API, WebAssembly needs to call out to JavaScript, which then makes the Web API call. Emscripten therefore creates the HTML and JavaScript glue code needed to achieve this."
 
 ### Orbital scripting
 

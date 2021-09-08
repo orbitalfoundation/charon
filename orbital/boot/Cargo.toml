@@ -4,7 +4,13 @@ version = "0.1.0"
 edition = "2018"
 
 [dependencies]
+crossbeam = "0.8.1"
+rand = "0.8.4"
 
+service = { path = "../service" }
 broker = { path = "../broker" }
-view = { path = "../view" }
-scripting = { path = "../scripting" }
+camera = { path = "../camera" }
+tensor = { path = "../tensor" }
+viewmakepad = { path = "../viewmakepad" }
+
+

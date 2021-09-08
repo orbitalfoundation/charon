@@ -9,5 +9,6 @@ crossbeam = "0.8.1"
 
 service = { path = "../service" }
 
-bevy = "0.5"
-bevy_mod_picking = "0.4.0"
+bevy = { git = "https://github.com/bevyengine/bevy.git", branch = "main", features=["jpeg"] }
+
+bevy_mod_picking = { git = "https://github.com/aevyrie/bevy_mod_picking.git" }

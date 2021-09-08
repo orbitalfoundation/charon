@@ -1,30 +1,12 @@
 [workspace]
+resolver = "2"
 
 members = [
-
-  # the core pieces:
-  #   - servicable defines a modules interfaces so modules can talk to each other
-  #   - broker is a module that is special, it helps other modules talk to each other
-  #   - boot is the main entry point; starts the broker up
-  #
-
   "service",
-  "broker",
   "boot",
-
-  # scripting is fairly close to core, but not in the core conceptually
-  # it is able to be driven by a script (javascript) and load modules up and wire them together
-  # so most of the userland ends up being brought up here
-
-  "scripting",
-
-  # camera is a hard coded built in module - it brings up a macosx webcam 
-
+  "broker",
   "camera",
-
-  # view is a hard coded built in module - it paints stuff to a window
-
-  "view",
-
+  "tensor",
+  "viewmakepad",
 ]
 

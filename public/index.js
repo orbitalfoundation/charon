@@ -18,8 +18,8 @@ let system = new System()
 // test invoke wrapper to make a cube
 orbital_message("camera")
 orbital_message("light")
-orbital_message("plane")
-orbital_message("monkey.gltf")
+//orbital_message("plane")
+orbital_message("anselm2.glb")
 
 // sleep and then test invoke wrapper to make a cube again
 sleep(1000)

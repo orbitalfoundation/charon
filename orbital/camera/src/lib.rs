@@ -41,9 +41,10 @@ impl Serviceable for Camera {
             // wait till display is up - basically a hack - can remove
             std::thread::sleep(std::time::Duration::from_millis(2000));
 
+//            send.send(Message::Subscribe(_sid,"/camera".to_string())).expect("Camera: failed to subscribe");
+
             loop {
    
-                // send.send(Message::Subscribe(_sid,"/camera".to_string())).expect("Camera: failed to subscribe");
                 while let Ok(message) = recv.try_recv() {
                     match message {
                         Message::Event(topic,data) => {

@@ -1,0 +1,14 @@
+[package]
+name = "bare_example"
+version = "0.1.0"
+authors = ["makepaddev"]
+edition = "2018"
+
+[dependencies]
+
+[dependencies.bare_example_app]
+path="./app"
+
+[dependencies.makepad-render]
+path="../../render"
+version="0.2"

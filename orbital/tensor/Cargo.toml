@@ -1,0 +1,15 @@
+
+[package]
+name = "tensor"
+version = "0.1.0"
+authors = ["Anselm Hook <anselm@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+
+crossbeam = "0.8.1"
+
+rustface = "*"
+
+service = { path = "../service" }
+

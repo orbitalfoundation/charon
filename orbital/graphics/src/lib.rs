@@ -48,7 +48,7 @@ impl Serviceable for Graphics {
 	    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// run bevy - this never returns annoyingly
 
-		App::build()
+		App::new()
 			.insert_resource(Msaa { samples: 4 })
 			.insert_resource(WindowDescriptor {
 			    title: "Orbital".to_string(),
@@ -62,13 +62,14 @@ impl Serviceable for Graphics {
 				}
 			)
 			.add_system(set_title.system())
+			//.add_startup_system(make_some_stuff.system())
 			.add_system(listen_to_messages.system())
 			.add_system(move_things.system())
 			.add_plugins(DefaultPlugins)
 			.add_plugin(OrbitCameraPlugin)
 			.add_plugin(PickingPlugin)
 			.add_plugin(DebugCursorPickingPlugin)
-//			.add_plugin(DebugEventsPickingPlugin)
+			//.add_plugin(DebugEventsPickingPlugin)
 			.run();
 	}
 }
@@ -103,7 +104,7 @@ fn listen_to_messages(
 						.insert_bundle(PickingCameraBundle::default());
                     },
                     "light" => {
-						commands.spawn_bundle(LightBundle {
+						commands.spawn_bundle(PointLightBundle {
 							transform: Transform::from_xyz(4.0, 8.0, 4.0),
 							..Default::default()
 						});
@@ -131,17 +132,28 @@ fn listen_to_messages(
                     "move" => {
                     },
                     _ => {
-						let path = "../../../public/".to_string() + data.as_str() + "#Mesh0/Primitive0";
+                    	// note meshes need vertex tangents (just use blender) -> https://github.com/bevyengine/bevy/issues/121
+                    	println!("loading from disk");
+
+						let path = "../../../public/".to_string() + data.as_str() + "#Scene0";
+
+					    let stuff: Handle<Scene> = assets.load(path.as_str());
+					    commands.spawn_scene(stuff);
+/*
+
 						let mesh: Handle<Mesh> = assets.load(path.as_str());
 						commands.spawn_bundle(PbrBundle {
-							//mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
 							mesh: mesh,
 							material: materials.add(Color::rgb(0.8, 0.1, 0.1).into()),
-							transform: Transform::from_xyz(0.0, 0.5, 0.0),
+							//transform: Transform::from_xyz(0.0, 0.5, 0.0),
+							transform: Transform::from_scale( Vec3::new(15.0,15.0,15.0) ),
+							//transform: Scale::from_xyz(2.0,2.0,2.0),
 							..Default::default()
 						})
 						//.with(MyProperties{ x:3.0, y:3.0 })
 						.insert_bundle(PickableBundle::default());
+*/
+
                     }
                 }
             },
@@ -163,35 +175,4 @@ fn move_things(
         }
     }
 }
-
-
-/*
-
-pub fn load_something (
-    commands: &mut Commands,
-    material: Handle<StandardMaterial>,
-    mesh: Handle<Mesh>,
-    position: Vec3,
-) {
-    commands
-        .spawn(PbrBundle {
-            transform: Transform::from_translation(position),
-            ..Default::default()
-        })
-        .with_children(|parent| {
-            parent.spawn(PbrBundle {
-                mesh,
-                material,
-                transform: {
-                    let mut transform = Transform::from_translation(Vec3::new(-0.2, 0., -0.95));
-                    transform.apply_non_uniform_scale(Vec3::new(0.2, 0.2, 0.2));
-                    transform
-                },
-                ..Default::default()
-            });
-        });
-}
-
-
-*/
 

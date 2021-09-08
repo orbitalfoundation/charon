@@ -1,0 +1,48 @@
+#
+# This is a wrapper for our application that presents a view interface leveraging wgpu directly
+# At the moment there is some kind of versioning issue - the latest version of wgpu breaks this code
+#
+
+
+[package]
+
+name = "viewgpu"
+version = "0.1.0"
+authors = ["Anselm Hook <anselm@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+
+crossbeam = "0.8.1"
+service = { path = "../service" }
+
+winit = "0.25.0"
+winit_input_helper = "0.10.0"
+
+wgpu = "0.10.1"
+wgpu_glyph = "0.14.1"
+
+# TODO I'd like to not depend on this - it's from the wgpu crate in their examples
+futures = "0.3"
+
+anyhow = "1.0"
+cgmath = "0.18"
+
+env_logger = "0.8"
+pollster = "0.2"
+image = "0.23"
+log = "0.4"
+tobj = "3.0"
+
+
+[dependencies.bytemuck]
+
+version = "1.4"
+features = ["derive"]
+
+
+[build-dependencies]
+
+anyhow = "1.0"
+fs_extra = "1.2"
+glob = "0.3"

@@ -6,7 +6,8 @@ use std::sync::Mutex;
 pub type SID = u64;
 
 ///
-/// Message: this is an enumeration of messages that a service can send or receive
+/// Message: all the messages we can send between services
+/// MOVE TODO
 ///
 
 #[derive(Clone)]
@@ -38,8 +39,10 @@ pub enum Message {
 
 }
 
+
+
 ///
-/// Servicable: this is the definition of something that is capable of being a service
+/// Servicable: a thing that can do some work; has some standard interfaces
 ///
 
 pub trait Serviceable: ServiceableClone {

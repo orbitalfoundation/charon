@@ -3,6 +3,41 @@ use crossbeam::channel::*;
 
 use service::*;
 
+
+
+
+
+
+//////////////////////////////
+// A registry - may replace broker below
+//////////////////////////////
+
+pub struct Registry {
+    id: i32,
+    name: String,
+    nodes: Vec<Box<dyn Serviceable>>,
+}
+
+impl Registry {
+    pub fn new() -> Registry {
+        let id: i32 = 1;
+        let name = "registry".to_string();
+        let nodes: Vec<Box<dyn Serviceable>> = Vec::new();
+        Self { id:id, name:name, nodes:nodes }
+    }
+    pub fn register(&self, node: Box<dyn Serviceable>) {
+        // - just store anything that appears in a list
+        // - have an ability to query for things
+        // - things could start their own threads; so i could give them some message handlers for me
+        //
+    }
+}
+
+
+
+
+
+
 ///
 /// A datastructure to internally register services
 ///
@@ -65,10 +100,12 @@ impl Serviceable for Broker {
                     Message::Share(sharedmemory) => {
                         // repost event objects 
                         for target in &registry {
-                            if target.1.subscriptions.borrow_mut().contains(&"/display".to_string()) {
+                            if target.1.subscriptions.borrow_mut().contains(&"/view".to_string()) {
                                 //let mut ptr = sharedmemory.lock().unwrap();
                                 //let mut sharedmemory = Arc::new(Mutex::new(Box::new(ptr)));
                                 let _res = target.1.send.send(Message::Share(sharedmemory));
+                                // TODO i can't really send it to multiple listeners without some kind of shared handle...
+                                // so i have to break here... else if there are two listeners it cannot work...
                                 break;
                             }
                         }
